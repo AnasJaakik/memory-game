@@ -239,6 +239,10 @@ export default function App() {
     startLevel(1)
   }
 
+  const handleRetry = () => {
+    startLevel(level)
+  }
+
   const handleSquareClick = (squareIdx) => {
     if (phase !== PHASE.PLAYER) return
 
@@ -361,8 +365,11 @@ export default function App() {
             <span className="gameover-value">{score} pts</span>
             {score >= best && score > 0 && <span className="new-best">New Best!</span>}
           </div>
-          <p className="card-desc">You reached level <strong>{level}</strong></p>
-          <button className="btn-primary" onClick={handleStart}>Play Again</button>
+          <p className="card-desc">Failed level <strong>{level}</strong></p>
+          <div className="gameover-actions">
+            <button className="btn-primary" onClick={handleRetry}>Retry Level {level}</button>
+            <button className="btn-secondary" onClick={handleStart}>New Game</button>
+          </div>
         </div>
       )}
     </div>
