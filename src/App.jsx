@@ -290,7 +290,7 @@ export default function App() {
   }
 
   const isInteractive = phase === PHASE.PLAYER
-  const showGrid = phase !== PHASE.IDLE && phase !== PHASE.GAMEOVER
+  const showGrid = phase !== PHASE.IDLE && phase !== PHASE.GAMEOVER && phase !== PHASE.COUNTDOWN
 
   return (
     <div className="app">
@@ -299,7 +299,7 @@ export default function App() {
         <p className="subtitle">Watch the sequence. Repeat it.</p>
       </header>
 
-      {phase !== PHASE.IDLE && phase !== PHASE.GAMEOVER && (
+      {phase !== PHASE.IDLE && phase !== PHASE.GAMEOVER && phase !== PHASE.COUNTDOWN && (
         <HUD
           level={level}
           score={score}
@@ -318,17 +318,14 @@ export default function App() {
         </div>
       )}
 
-      {phase === PHASE.COUNTDOWN && (
-        <div className="countdown-display">
-          <span className="countdown-num">{countdown}</span>
-        </div>
-      )}
-
-      {showGrid && (
+      {(showGrid || phase === PHASE.COUNTDOWN) && (
         <div
           className="grid-wrapper"
           style={{ '--grid-size': gridSize }}
         >
+          {phase === PHASE.COUNTDOWN && (
+            <div className="phase-label watching">Get ready</div>
+          )}
           {phase === PHASE.SHOWING && (
             <div className="phase-label watching">Watch the sequence</div>
           )}
@@ -344,16 +341,23 @@ export default function App() {
             </div>
           )}
 
-          <div className="grid" style={{ '--grid-size': gridSize }}>
-            {Array.from({ length: totalSquares }).map((_, idx) => (
-              <Square
-                key={idx}
-                color={COLORS[idx % COLORS.length]}
-                state={getSquareState(idx)}
-                onClick={() => handleSquareClick(idx)}
-                disabled={!isInteractive}
-              />
-            ))}
+          <div className="grid-container">
+            <div className="grid" style={{ '--grid-size': gridSize }}>
+              {Array.from({ length: totalSquares }).map((_, idx) => (
+                <Square
+                  key={idx}
+                  color={COLORS[idx % COLORS.length]}
+                  state={getSquareState(idx)}
+                  onClick={() => handleSquareClick(idx)}
+                  disabled={!isInteractive || phase === PHASE.COUNTDOWN}
+                />
+              ))}
+            </div>
+            {phase === PHASE.COUNTDOWN && (
+              <div className="countdown-overlay">
+                <span className="countdown-num">{countdown}</span>
+              </div>
+            )}
           </div>
         </div>
       )}
